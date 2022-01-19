@@ -2,10 +2,40 @@
 RewriteEngine On
 ErrorDocument 404 /page-not-found.php
 
+# redirect http to https
+RewriteEngine On
+RewriteCond %{SERVER_PORT} 80
+RewriteRule ^(.*)$ https://dissertationsland.co.uk/$1 [L,R=301,NE]
+
+# redirect www to non-www
+
+RewriteEngine On
+RewriteBase /
+RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+
+# RewriteEngine On
+# RewriteCond %{HTTPS} !=on
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301,NE]
+# Header always set Content-Security-Policy "upgrade-insecure-requests;"
+
 Redirect /index / '/' /
+
+Options -Multiviews -Indexes +FollowSymLinks
+RewriteEngine On
+RewriteBase /
+DirectorySlash Off
+
+# remove trailing slash
+RewriteRule ^(.*)\/(\?.*)?$ $1$2 [R=301,L]
+
+# rewrite /dir/file?query to /dir/file.php?query
+RewriteRule ^([\w\/-]+)(\?.*)?$ $1.php$2 [L,T=application/x-httpd-php]
 
 Redirect /index.php / '/' /
 
+# RewriteCond %{REQUEST_FILENAME} !-d
+# RewriteRule ^(.*)/$ /$1 [L,R] # <- for test, for prod use [L,R=301]
 
 RewriteEngine On
 
@@ -35,51 +65,53 @@ RewriteCond %{REQUEST_FILENAME}.php -f
 RewriteRule ^(.*?)/?$ $1.php [NC,L]
 
 
-<IfModule mod_deflate.c>
-  # Compress HTML, CSS, JavaScript, Text, XML and fonts
-  AddOutputFilterByType DEFLATE application/javascript
-  AddOutputFilterByType DEFLATE application/rss+xml
-  AddOutputFilterByType DEFLATE application/vnd.ms-fontobject
-  AddOutputFilterByType DEFLATE application/x-font
-  AddOutputFilterByType DEFLATE application/x-font-opentype
-  AddOutputFilterByType DEFLATE application/x-font-otf
-  AddOutputFilterByType DEFLATE application/x-font-truetype
-  AddOutputFilterByType DEFLATE application/x-font-ttf
-  AddOutputFilterByType DEFLATE application/x-javascript
-  AddOutputFilterByType DEFLATE application/xhtml+xml
-  AddOutputFilterByType DEFLATE application/xml
-  AddOutputFilterByType DEFLATE font/opentype
-  AddOutputFilterByType DEFLATE font/otf
-  AddOutputFilterByType DEFLATE font/ttf
-  AddOutputFilterByType DEFLATE image/svg+xml
-  AddOutputFilterByType DEFLATE image/x-icon
-  AddOutputFilterByType DEFLATE text/css
-  AddOutputFilterByType DEFLATE text/html
-  AddOutputFilterByType DEFLATE text/javascript
-  AddOutputFilterByType DEFLATE text/plain
-  AddOutputFilterByType DEFLATE text/xml
 
-  BrowserMatch ^Mozilla/4 gzip-only-text/html
-  BrowserMatch ^Mozilla/4\.0[678] no-gzip
-  BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
-  Header append Vary User-Agent
-</IfModule>
-<IfModule mod_expires.c>
-    ExpiresActive On
-    ExpiresDefault "access plus 10 days"
-    ExpiresByType text/css "access plus 1 week"
-    ExpiresByType text/plain "access plus 1 month"
-    ExpiresByType image/gif "access plus 1 month"
-    ExpiresByType image/png "access plus 1 month"
-    ExpiresByType image/jpeg "access plus 1 month"
-    ExpiresByType application/x-javascript "access plus 1 month"
-    ExpiresByType application/javascript "access plus 1 week"
-    ExpiresByType application/x-icon "access plus 1 year"
-</IfModule>
 
-# php -- BEGIN cPanel-generated handler, do not edit
-# Set the “ea-php72” package as the default “PHP” programming language.
-<IfModule mime_module>
-  AddHandler application/x-httpd-ea-php72 .php .php7 .phtml
-</IfModule>
-# php -- END cPanel-generated handler, do not edit
+# <IfModule mod_deflate.c>
+#  # Compress HTML, CSS, JavaScript, Text, XML and fonts
+#  AddOutputFilterByType DEFLATE application/javascript
+#  AddOutputFilterByType DEFLATE application/rss+xml
+#  AddOutputFilterByType DEFLATE application/vnd.ms-fontobject
+#  AddOutputFilterByType DEFLATE application/x-font
+#  AddOutputFilterByType DEFLATE application/x-font-opentype
+#  AddOutputFilterByType DEFLATE application/x-font-otf
+#  AddOutputFilterByType DEFLATE application/x-font-truetype
+#  AddOutputFilterByType DEFLATE application/x-font-ttf
+#  AddOutputFilterByType DEFLATE application/x-javascript
+#  AddOutputFilterByType DEFLATE application/xhtml+xml
+#  AddOutputFilterByType DEFLATE application/xml
+#  AddOutputFilterByType DEFLATE font/opentype
+#  AddOutputFilterByType DEFLATE font/otf
+#  AddOutputFilterByType DEFLATE font/ttf
+#  AddOutputFilterByType DEFLATE image/svg+xml
+#  AddOutputFilterByType DEFLATE image/x-icon
+#  AddOutputFilterByType DEFLATE text/css
+#  AddOutputFilterByType DEFLATE text/html
+#  AddOutputFilterByType DEFLATE text/javascript
+#  AddOutputFilterByType DEFLATE text/plain
+#  AddOutputFilterByType DEFLATE text/xml
+
+#  BrowserMatch ^Mozilla/4 gzip-only-text/html
+#  BrowserMatch ^Mozilla/4\.0[678] no-gzip
+#  BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+#  Header append Vary User-Agent
+# </IfModule>
+# <IfModule mod_expires.c>
+#     ExpiresActive On
+#     ExpiresDefault "access plus 10 days"
+#     ExpiresByType text/css "access plus 1 week"
+#     ExpiresByType text/plain "access plus 1 month"
+#     ExpiresByType image/gif "access plus 1 month"
+#     ExpiresByType image/png "access plus 1 month"
+#     ExpiresByType image/jpeg "access plus 1 month"
+#     ExpiresByType application/x-javascript "access plus 1 month"
+#     ExpiresByType application/javascript "access plus 1 week"
+#     ExpiresByType application/x-icon "access plus 1 year"
+# </IfModule>
+
+# # php -- BEGIN cPanel-generated handler, do not edit
+# # Set the “ea-php72” package as the default “PHP” programming language.
+# <IfModule mime_module>
+#  AddHandler application/x-httpd-ea-php72 .php .php7 .phtml
+# </IfModule>
+# # php -- END cPanel-generated handler, do not edit
